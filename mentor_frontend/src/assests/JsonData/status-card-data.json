@@ -1,0 +1,22 @@
+[
+    {
+        "icon": "bx bx-shopping-bag",
+        "count": "1,995",
+        "title": "Dividends"
+    },
+    {
+        "icon": "bx bx-cart",
+        "count": "10",
+        "title": "no. of Accounts"
+    },
+    {
+        "icon": "bx bx-dollar-circle",
+        "count": "$2,632",
+        "title": " Total Loans"
+    },
+    {
+        "icon": "bx bx-receipt",
+        "count": "1,711",
+        "title": "Total Paid"
+    }
+]

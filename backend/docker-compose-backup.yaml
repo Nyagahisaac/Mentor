@@ -1,0 +1,128 @@
+version: "3"
+
+services:
+ 
+  web:
+    build: .
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./db:/usr/src/app/db
+
+  # uploader:
+  #   image: alpine
+  #   restart: always
+  #   ports:
+  #     - "5555:5555"
+  #   volumes:
+  #     - ./uploader:/usr/uploader
+  #   command: /usr/uploader/uploader
+
+  caddy:
+    image: abiosoft/caddy
+    depends_on:
+      - "web"
+    restart: always
+    environment:
+      ACME_AGREE: "true"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/Caddyfile
+      - caddy_certs:/root/.caddy
+      - media:/mentor/media
+      - static:/mentor/static
+    #   - ./uploader/uploads:/uploader/uploads
+
+  mentor:
+    build: ./mentor
+    restart: always
+    container_name: mentor
+    hostname: ga
+    domainname: ga.kahawa.dev
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_NAME: mentor
+      DATABASE_USER: postgres
+      DATABASE_PASS: allow
+      DEBUG: "True"
+    volumes:
+      - ./mentor:/mentor
+      - static:/mentor/staticfiles
+      - media:/mentor/media
+    expose:
+      - 8000
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --no-input && gunicorn --workers=3 mentor.wsgi -b 0.0.0.0:8000"
+  # db:
+  # image: mariadb:10
+  #  restart: unless-stopped
+  #  env_file: .env
+  #  environment:
+  #    MYSQL_ROOT_PASSWORD: allow
+  #   volumes:
+  #   - mariadb:/var/lib/mysql
+  #  ports:
+  #   - 3306
+  #gotrue:
+  # build: gotrue
+  #  restart: unless-stopped
+  #  env_file: .env
+  #  environment:
+  #   - PORT=${GOTRUE_PORT}
+  #    - "DATABASE_URL=${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(db:3306)/${MYSQL_DATABASE}?parseTime=true&multiStatements=true"
+  #  ports:
+  #     - ${GOTRUE_PORT}:${GOTRUE_PORT}
+  # depends_on:
+  #   - db
+
+  # bot:
+  #   image: edeng23/binance-trade-bot
+  #   container_name: binance_trader
+  #   environment:
+  #     SUPPORTED_COIN_LIST: "CHZ BTT HOT NPXS TROY VTHO ICX ADA QTUM VET VITE LUNA"
+  #     CURRENT_COIN_SYMBOL: CHZ
+  #     BRIDGE_SYMBOL: USDT
+  #     API_KEY: ociHswqxfTp2mKJtFozQsEJMDkrEi7DMRCp6RhMQhqzaRoiytRq5xG9y48rAHIRW
+  #     API_SECRET_KEY: 7af0kfUUKy1fuHfUR2umJrxZlyWQH7kJkJsjOkIYHcwYcu4kaEWsDrpfYOmhv8D8
+  #     SCOUT_MULTIPLIER: 5
+  #     SCOUT_SLEEP_TIME: 5
+  #     TLD: com
+  #   volumes:
+  #     - ./user.cfg:/app/user.cfg
+  #     - ./data:/app/data
+  #     - ./logs:/app/logs
+  #     - ./binance:/app/config
+  #   command: python -m binance_trade_bot
+
+  # api:
+  #   image: edeng23/binance-trade-bot
+  #   container_name: binance_trader_api
+  #   environment:
+  #     SUPPORTED_COIN_LIST: "BTC ETH BNB ONE LTC ADA BCH DASH EOS ETC NANO NEO OMG QTUM TRX WAVES XLM XMR XTZ ZEC ZRX"
+  #    CURRENT_COIN_SYMBOL: BTC
+  #   BRIDGE_SYMBOL: BUSD
+  #  API_KEY: ociHswqxfTp2mKJtFozQsEJMDkrEi7DMRCp6RhMQhqzaRoiytRq5xG9y48rAHIRW
+  #   API_SECRET_KEY: 7af0kfUUKy1fuHfUR2umJrxZlyWQH7kJkJsjOkIYHcwYcu4kaEWsDrpfYOmhv8D8
+  #   SCOUT_MULTIPLIER: 4
+  #  SCOUT_SLEEP_TIME: 5
+  #   TLD: com
+  #  volumes:
+  #  - ./data:/app/data
+  #   - ./logs:/app/logs
+  #   - ./binance:/app/config
+#
+#  ports:
+#   - 5123:5123
+# command: gunicorn binance_trade_bot.api_server:app -k eventlet -w 1 --threads 1 -b 0.0.0.0:5123
+# depends_on:
+#  - crypto-trading
+
+volumes:
+  caddy_certs:
+  # db:
+  media:
+  static:
+#  db_data:
+# mariadb:

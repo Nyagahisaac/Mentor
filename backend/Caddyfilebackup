@@ -1,0 +1,65 @@
+cloud.kahawa.dev {
+  bind {$ADDRESS}
+  proxy / web:3000 
+  tls ck@elevatika.com
+}
+
+library.kahawa.dev {
+  bind {$ADDRESS}
+  proxy / 94.237.61.157:3001 
+  tls ck@elevatika.com
+}
+
+doge.kahawa.dev {
+  bind {$ADDRESS}
+  proxy / 94.237.61.157:3031 
+  tls ck@elevatika.com
+}
+
+// ga.kahawa.dev {
+//   bind {$ADDRESS}
+//   proxy / 94.237.61.157:8000 {
+//     transparent
+//     websocket
+//   }
+//   tls ck@elevatika.com
+// }
+
+// gotrue.kahawa.dev {
+//   bind {$ADDRESS}
+//   proxy / gotrue:9999 {
+//     transparent
+//   }
+//   tls ck@elevatika.com
+// }
+
+// uploader.kahawa.dev {
+//   bind {$ADDRESS}
+//   proxy / uploader:5555 {
+//     transparent
+//     except /uploads
+//   }
+//   root /uploader
+//   tls ck@elevatika.com
+// }
+
+ga.kahawa.dev {
+  bind {$ADDRESS}
+  proxy / mentor:8000 {
+   transparent
+   except /media /static
+   header_downstream Access-Control-Allow-Origin "*"
+   header_downstream -Server
+   header_downstream Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT, PATCH"
+  }
+  root /mentor
+  tls ck@elevatika.com
+}
+
+// #library.kahawa.dev {
+// #  bind {$ADDRESS}
+// #  proxy / binance_trader_api:5123 {
+// #    transparent
+// #  }
+// #  tls ck@elevatika.com
+// #}

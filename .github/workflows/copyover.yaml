@@ -1,0 +1,23 @@
+name: Push File
+
+on: push
+
+jobs:
+  copy-file:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Pushes changes
+      uses: crykn/copy_folder_to_another_repo_action@v1.0.6
+      env:
+        API_TOKEN_GITHUB: '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'
+      with:
+        source_folder: 'mentor_frontend'
+        destination_repo: 'CkCreative/mentor'
+        destination_folder: 'mentor_frontend'
+        destination_branch: 'main'
+        user_email: 'mikeck93@gmail.com'
+        user_name: 'MikeCK'
+        commit_msg: '[GHA] Update files.'

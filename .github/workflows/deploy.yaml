@@ -1,0 +1,31 @@
+name: CI
+
+on: [push]
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: COPY FILES TO SERVER
+        uses: appleboy/scp-action@master
+        with:
+          host: 94.237.61.157
+          username: elev
+          password: allow
+          source: "."
+          target: "~/mentor"
+          
+      - name: RUN FILES IN SERVER
+        uses: appleboy/ssh-action@master
+        with:
+          host: 94.237.61.157
+          username: elev
+          password: allow
+          script: |
+            cd cloud
+            docker-compose down
+            docker-compose build --no-cache mentor
+            docker-compose up -d
